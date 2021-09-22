@@ -43,7 +43,7 @@ app.post('/users', (request, response) => {
 
   users.push(user)
 
-  return response.status(201).json(users);
+  return response.status(201).json(user);
 });
 
 // List TODO
@@ -79,7 +79,7 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const todo = user.todos.find(todo => todo.id === id)
 
   if (!todo) {
-    return response.status(400).json({ error: 'Todo not exists!'})
+    return response.status(404).json({ error: 'Todo not exists!'})
   }
 
   todo.title = title
@@ -95,7 +95,7 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   const todo = user.todos.find(todo => todo.id === id)
 
   if (!todo) {
-    return response.status(400).json({ error: 'Todo not exists!'})
+    return response.status(404).json({ error: 'Todo not exists!'})
   }
 
   todo.done = true
@@ -107,15 +107,15 @@ app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
   const { user } = request; // get user object
   const { id } = request.params;
 
-  const todo = user.todos.findIndex(todo => todo.id === id)
+  const todoIndex = user.todos.findIndex(todo => todo.id === id)
 
-  if (!todo) {
-    return response.status(400).json({ error: 'Todo not exists!'})
+  if (todoIndex === -1) {
+    return response.status(404).json({ error: 'Todo not exists!'})
   }
 
-  user.todos.splice(todo, 1)
+  user.todos.splice(todoIndex, 1)
 
-  return response.status(200).send();
+  return response.status(204).send();
 });
 
 module.exports = app;
